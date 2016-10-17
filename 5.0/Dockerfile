@@ -26,7 +26,7 @@ RUN echo "deb $ELASTICSEARCH_REPO_BASE stable main" > /etc/apt/sources.list.d/el
 
 RUN set -x \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends elasticsearch=$ELASTICSEARCH_VERSION \
+	&& apt-get install -y --no-install-recommends elasticsearch=$ELASTICSEARCH_VERSION wget zip unzip \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV PATH /usr/share/elasticsearch/bin:$PATH
@@ -45,6 +45,10 @@ RUN set -ex \
 	done
 
 COPY config ./config
+
+RUN wget https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-5.0.0-rc1.zip -O /root/xpack-5.0.0-rc1.zip
+
+RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch file:///root/xpack-5.0.0-rc1.zip
 
 VOLUME /usr/share/elasticsearch/data
 
